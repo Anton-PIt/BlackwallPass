@@ -6,7 +6,7 @@ plugins {
 android {
 	namespace = "com.cybersec.blackwallpass"
 	compileSdk {
-		version = release(36) {
+		version = release(37) {
 			minorApiLevel = 1
 		}
 	}
@@ -37,6 +37,7 @@ android {
 }
 
 dependencies {
+	implementation(libs.argon2kt)
 	implementation(libs.androidx.core.ktx)
 	implementation(libs.androidx.lifecycle.runtime.ktx)
 	implementation(libs.androidx.activity.compose)
