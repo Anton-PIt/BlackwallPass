@@ -17,6 +17,8 @@ object CryptoManager {
 	private const val TAG_LENGTH_BITS = 128
 	private const val AES_ALGORITHM = "AES/GCM/NoPadding"
 
+	private const val CHECK_STRING = "Blackwall_Verified"
+
 	private val secureRandom = SecureRandom()
 	private val argon2Kt = Argon2Kt()
 
@@ -70,5 +72,19 @@ object CryptoManager {
 		val plaintext = cipher.doFinal(ciphertext)
 
 		return String(plaintext, Charsets.UTF_8)
+	}
+
+	//Шифруем ключевое слово ключем
+	fun encryptCheckString(key: ByteArray): String = encrypt(key, CHECK_STRING)
+
+	//Метод проверки матера пароля, путем расшифровывания ключевого слова
+	fun verifyMasterPassword(masterPassword: String, salt: ByteArray, encryptedCheckString: String): Boolean {
+		return try {
+			val key = deriveKey(masterPassword, salt)
+			val decrypted = decrypt(key, encryptedCheckString)
+			decrypted == CHECK_STRING
+		} catch (e: Exception) {
+			false
+		}
 	}
 }

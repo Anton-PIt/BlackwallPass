@@ -122,4 +122,46 @@ class CryptoManagerTest {
 
 		Assert.assertEquals(originalText, decrypted)
 	}
+
+	//Тесты контрольной строки (encryptCheckString)
+	@Test
+	fun encryptCheckString_returnsNotEmptyString() {
+		val salt = CryptoManager.generateSalt()
+		val key = CryptoManager.deriveKey("MySecretMasterKey", salt)
+		val encryptedCheckString = CryptoManager.encryptCheckString(key)
+		Assert.assertTrue(encryptedCheckString.isNotEmpty())
+	}
+
+	//Тесты проверки мастер-пароля (verifyMasterPassword)
+	@Test
+	fun verifyMasterPassword_withCorrectPassword_returnsTrue() {
+		val salt = CryptoManager.generateSalt()
+		val masterPassword = "MySecretMasterKey"
+		val key = CryptoManager.deriveKey(masterPassword, salt)
+		val encryptedCheckString = CryptoManager.encryptCheckString(key)
+		val result = CryptoManager.verifyMasterPassword(masterPassword, salt, encryptedCheckString)
+		Assert.assertTrue(result)
+	}
+
+	@Test
+	fun verifyMasterPassword_withWrongPassword_returnsFalse() {
+		val salt = CryptoManager.generateSalt()
+		val key = CryptoManager.deriveKey("CorrectPassword", salt)
+		val encryptedCheckString = CryptoManager.encryptCheckString(key)
+		val result = CryptoManager.verifyMasterPassword("WrongPassword", salt, encryptedCheckString)
+		Assert.assertFalse(result)
+	}
+
+	@Test
+	fun verifyMasterPassword_withTamperedCheckString_returnsFalse() {
+		val salt = CryptoManager.generateSalt()
+		val masterPassword = "MySecretMasterKey"
+		val key = CryptoManager.deriveKey(masterPassword, salt)
+		val encryptedCheckString = CryptoManager.encryptCheckString(key)
+
+		val tampered = encryptedCheckString.substring(0, 10) + "X" + encryptedCheckString.substring(11)
+
+		val result = CryptoManager.verifyMasterPassword(masterPassword, salt, tampered)
+		Assert.assertFalse(result)
+	}
 }
