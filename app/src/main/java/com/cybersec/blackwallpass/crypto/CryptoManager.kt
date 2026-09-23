@@ -10,6 +10,7 @@ import javax.crypto.spec.SecretKeySpec
 
 object CryptoManager {
 	private const val SALT_LENGTH_BYTES = 16
+
 	private const val ARGON2_ITERATIONS = 2
 	private const val ARGON2_MEMORY_KIB = 19456
 
@@ -83,7 +84,7 @@ object CryptoManager {
 			val key = deriveKey(masterPassword, salt)
 			val decrypted = decrypt(key, encryptedCheckString)
 			decrypted == CHECK_STRING
-		} catch (e: Exception) {
+		} catch (_: Exception) {
 			false
 		}
 	}
