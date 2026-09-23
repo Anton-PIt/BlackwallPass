@@ -75,10 +75,10 @@ object CryptoManager {
 		return String(plaintext, Charsets.UTF_8)
 	}
 
-	//Шифруем ключевое слово ключем
+	//Шифруем слово "Blackwall_Verified" ключем
 	fun encryptCheckString(key: ByteArray): String = encrypt(key, CHECK_STRING)
 
-	//Метод проверки матера пароля, путем расшифровывания ключевого слова
+	//Метод проверки маcтер-пароля, путем расшифровывания контрольной строки
 	fun verifyMasterPassword(masterPassword: String, salt: ByteArray, encryptedCheckString: String): Boolean {
 		return try {
 			val key = deriveKey(masterPassword, salt)
