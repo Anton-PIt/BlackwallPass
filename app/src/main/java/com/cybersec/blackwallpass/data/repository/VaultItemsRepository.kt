@@ -1,13 +1,14 @@
 package com.cybersec.blackwallpass.data.repository
 
-import com.cybersec.blackwallpass.data.SupabaseClientProvider
 import com.cybersec.blackwallpass.data.model.VaultItem
+import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
+import javax.inject.Inject
 
 //Репозиторий для работы с данными из таблицы vault_items
-class VaultItemsRepository {
-	private val client = SupabaseClientProvider.client
-
+class VaultItemsRepository @Inject constructor(
+	private val client: SupabaseClient
+) {
 	//Получить все запись пользователя
 	suspend fun getAll(): List<VaultItem> {
 		return client.from("vault_items").select().decodeList<VaultItem>()

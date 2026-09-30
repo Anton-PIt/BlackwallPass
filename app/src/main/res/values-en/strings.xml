@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="app_name">BlackwallPass</string>
+
+	<!-- Field validation -->
+	<string name="error_email_empty">Email cannot be empty</string>
+	<string name="error_email_invalid">Invalid email format</string>
+	<string name="error_master_password_empty">Master password cannot be empty</string>
+	<string name="error_master_password_too_short">Master password must be at least 12 characters</string>
+	<string name="error_passwords_dont_match">Passwords don\'t match</string>
+	<string name="error_validation_failed">Please check that all fields are filled correctly</string>
+	<string name="error_invalid_master_password">Invalid master password</string>
+
+	<!-- Network -->
+	<string name="error_network">No internet connection</string>
+	<string name="error_timeout">Request timed out. Please try again later</string>
+
+	<!-- Sign up -->
+	<string name="error_user_already_exists">User with this email already exists</string>
+	<string name="error_weak_password">Password is too weak</string>
+	<string name="error_email_not_confirmed">Please confirm your email</string>
+
+	<!-- Sign in -->
+	<string name="error_invalid_credentials">Invalid email or password</string>
+	<string name="error_user_banned">Account is banned</string>
+
+	<!-- Password change -->
+	<string name="error_same_password">New password must be different from the old one</string>
+
+	<!-- Rate limits -->
+	<string name="error_too_many_requests">Too many attempts. Please try again later</string>
+
+	<!-- Common -->
+	<string name="error_unknown">Something went wrong. Please try again</string>
+</resources>

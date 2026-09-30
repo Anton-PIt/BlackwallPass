@@ -1,3 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">BlackwallPass</string>
+
+	<!-- Валидация полей -->
+	<string name="error_email_empty">Email не может быть пустым</string>
+	<string name="error_email_invalid">Неверный формат email</string>
+	<string name="error_master_password_empty">Мастер-пароль не может быть пустым</string>
+	<string name="error_master_password_too_short">Мастер-пароль должен быть минимум 12 символов</string>
+	<string name="error_passwords_dont_match">Пароли не совпадают</string>
+	<string name="error_validation_failed">Проверьте правильность заполнения полей</string>
+	<string name="error_invalid_master_password">Неверный мастер-пароль</string>
+
+	<!-- Сеть -->
+	<string name="error_network">Нет подключения к интернету</string>
+	<string name="error_timeout">Превышено время ожидания. Попробуйте позже</string>
+
+	<!-- Регистрация -->
+	<string name="error_user_already_exists">Пользователь с таким email уже существует</string>
+	<string name="error_weak_password">Слишком слабый пароль</string>
+	<string name="error_email_not_confirmed">Подтвердите email</string>
+
+	<!-- Вход -->
+	<string name="error_invalid_credentials">Неверный email или пароль</string>
+	<string name="error_user_banned">Аккаунт заблокирован</string>
+
+	<!-- Смена пароля -->
+	<string name="error_same_password">Новый пароль должен отличаться от старого</string>
+
+	<!-- Лимиты -->
+	<string name="error_too_many_requests">Слишком много попыток. Попробуйте позже</string>
+
+	<!-- Общая -->
+	<string name="error_unknown">Что-то пошло не так. Попробуйте ещё раз</string>
 </resources>
