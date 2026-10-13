@@ -1,7 +1,6 @@
 package com.cybersec.blackwallpass.ui.screens.auth.domain
 
 import android.util.Base64
-import android.util.Patterns
 import com.cybersec.blackwallpass.R
 import com.cybersec.blackwallpass.core.exception.UnknownException
 import com.cybersec.blackwallpass.core.exception.ValidationException
@@ -15,24 +14,14 @@ class SignUpUseCase @Inject constructor(
 	private val userSecurityRepository: UserSecurityRepository
 ) {
 	suspend operator fun invoke(email: String, masterPassword: String, confirmMasterPassword: String): Result<Unit> {
-		if (email.isBlank()) {
-			return Result.failure(ValidationException(R.string.error_email_empty))
+		AuthValidator.validateEmail(email)?.let {
+			return Result.failure(ValidationException(it))
 		}
-
-		if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-			return Result.failure(ValidationException(R.string.error_email_invalid))
+		AuthValidator.validateMasterPassword(masterPassword)?.let {
+			return Result.failure(ValidationException(it))
 		}
-
-		if (masterPassword.isBlank()) {
-			return Result.failure(ValidationException(R.string.error_master_password_empty))
-		}
-
-		if (masterPassword.length < 12) {
-			return Result.failure(ValidationException(R.string.error_master_password_too_short))
-		}
-
-		if (masterPassword != confirmMasterPassword) {
-			return Result.failure(ValidationException(R.string.error_passwords_dont_match))
+		AuthValidator.validateConfirmPassword(masterPassword, confirmMasterPassword)?.let {
+			return Result.failure(ValidationException(it))
 		}
 
 		val signUpResult = authRepository.signUp(email, masterPassword)

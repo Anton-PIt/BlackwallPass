@@ -1,7 +1,6 @@
 package com.cybersec.blackwallpass.ui.screens.auth.domain
 
 import android.util.Base64
-import android.util.Patterns
 import com.cybersec.blackwallpass.R
 import com.cybersec.blackwallpass.core.exception.AuthException
 import com.cybersec.blackwallpass.core.exception.UnknownException
@@ -15,16 +14,11 @@ class SignInUseCase @Inject constructor(
 	private val userSecurityRepository: UserSecurityRepository
 ) {
 	suspend operator fun invoke(email: String, masterPassword: String): Result<Unit> {
-		if (email.isBlank()) {
-			return Result.failure(ValidationException(R.string.error_email_empty))
+		AuthValidator.validateEmail(email)?.let {
+			return Result.failure(ValidationException(it))
 		}
-
-		if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-			return Result.failure(ValidationException(R.string.error_email_invalid))
-		}
-
-		if (masterPassword.isBlank()) {
-			return Result.failure(ValidationException(R.string.error_master_password_empty))
+		AuthValidator.validateMasterPassword(masterPassword)?.let {
+			return Result.failure(ValidationException(it))
 		}
 
 		val signInResult = authRepository.signIn(email, masterPassword)

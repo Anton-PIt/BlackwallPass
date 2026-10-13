@@ -1,6 +1,9 @@
 package com.cybersec.blackwallpass.ui.screens.auth.presentation
 
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.snapshotFlow
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.cybersec.blackwallpass.R
 import com.cybersec.blackwallpass.core.exception.AuthException
@@ -8,80 +11,110 @@ import com.cybersec.blackwallpass.core.exception.BaseException
 import com.cybersec.blackwallpass.core.exception.NetworkException
 import com.cybersec.blackwallpass.core.exception.ValidationException
 import com.cybersec.blackwallpass.ui.common.AppViewModel
-import com.cybersec.blackwallpass.ui.common.ProgressMode
+import com.cybersec.blackwallpass.ui.common.progress.ProgressMode
+import com.cybersec.blackwallpass.ui.screens.auth.domain.AuthValidator
 import com.cybersec.blackwallpass.ui.screens.auth.domain.SignInUseCase
 import com.cybersec.blackwallpass.ui.screens.auth.domain.SignUpUseCase
 import com.cybersec.blackwallpass.ui.screens.auth.model.AuthTab
-import com.cybersec.blackwallpass.ui.screens.auth.model.BiometricType
+import com.nulabinc.zxcvbn.Zxcvbn
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
 	private val signInUseCase: SignInUseCase,
-	private val signUpUseCase: SignUpUseCase
+	private val signUpUseCase: SignUpUseCase,
+	private val zxcvbn: Zxcvbn,
+	private val savedStateHandle: SavedStateHandle
 ) : AppViewModel<AuthEvent>() {
-	private val _tab = mutableStateOf(AuthTab.LOGIN)
-	private val _email = mutableStateOf("")
-	private val _masterPassword = mutableStateOf("")
-	private val _confirmMasterPassword = mutableStateOf("")
-	private val _showPassword = mutableStateOf(false)
-	private val _biometricEnabled = mutableStateOf(false)
-	private val _biometricType = mutableStateOf(BiometricType.FINGER)
+	private val _tab = mutableStateOf(
+		savedStateHandle.get<String>("tab")
+			?.let { name -> AuthTab.entries.find { it.name == name } }
+			?: AuthTab.LOGIN
+	)
+	private val _showMasterPassword = mutableStateOf(false)
+	private val _showConfirmPassword = mutableStateOf(false)
 	private val _biometricAvailable = mutableStateOf(false)
 	private val _fingerprintAvailable = mutableStateOf(false)
 	private val _faceAvailable = mutableStateOf(false)
+	private val _emailError = mutableStateOf<Int?>(null)
+	private val _masterPasswordError = mutableStateOf<Int?>(null)
+	private val _confirmMasterPasswordError = mutableStateOf<Int?>(null)
+	private val _passwordStrength = mutableStateOf<Int?>(null)
+	private val fieldsState = AuthFieldsState()
 
 	val uiState = AuthUiState(
 		progressState = progressState,
 		snackbarState = snackbarState,
+		fieldsState = fieldsState,
+		passwordStrength = _passwordStrength,
 		contentState = AuthContentUiState(
 			tab = _tab,
-			email = _email,
-			masterPassword = _masterPassword,
-			confirmMasterPassword = _confirmMasterPassword,
-			showPassword = _showPassword,
-			biometricEnabled = _biometricEnabled,
-			biometricType = _biometricType,
+			showMasterPassword = _showMasterPassword,
+			showConfirmPassword = _showConfirmPassword,
 			biometricAvailable = _biometricAvailable,
 			fingerprintAvailable = _fingerprintAvailable,
-			faceAvailable = _faceAvailable
+			faceAvailable = _faceAvailable,
+			emailError = _emailError,
+			masterPasswordError = _masterPasswordError,
+			confirmMasterPasswordError = _confirmMasterPasswordError
 		)
 	)
 
+	init {
+		savedStateHandle.get<String>("email")?.let { email ->
+			fieldsState.email.setTextAndPlaceCursorAtEnd(email)
+		}
+		viewModelScope.launch {
+			snapshotFlow { fieldsState.email.text.toString() }
+				.collect { savedStateHandle["email"] = it }
+		}
+		viewModelScope.launch {
+			snapshotFlow { fieldsState.masterPassword.text.toString() }
+				.distinctUntilChanged()
+				.collectLatest { password ->
+					delay(300)
+					_passwordStrength.value = if (password.isBlank()) {
+						null
+					} else {
+						zxcvbn.measure(password).score
+					}
+				}
+		}
+	}
+
 	fun onTabChange(tab: AuthTab) {
 		_tab.value = tab
+		savedStateHandle["tab"] = tab.name
 	}
 
-	fun onEmailChange(value: String) {
-		_email.value = value
+	fun onShowMasterPasswordToggle(show: Boolean) {
+		_showMasterPassword.value = show
 	}
 
-	fun onMasterPasswordChange(value: String) {
-		_masterPassword.value = value
-	}
-
-	fun onConfirmMasterPasswordChange(value: String) {
-		_confirmMasterPassword.value = value
-	}
-
-	fun onShowPasswordToggle(showPassword: Boolean) {
-		_showPassword.value = showPassword
-	}
-
-	fun onBiometricEnabledToggle(enabled: Boolean) {
-		_biometricEnabled.value = enabled
-	}
-
-	fun onBiometricTypeChange(type: BiometricType) {
-		_biometricType.value = type
+	fun onShowConfirmPasswordToggle(show: Boolean) {
+		_showConfirmPassword.value = show
 	}
 
 	fun onSubmit() = viewModelScope.launch {
-		val email = _email.value
-		val masterPassword = _masterPassword.value
-		val confirmMasterPassword = _confirmMasterPassword.value
+		val email = fieldsState.email.text.toString()
+		val masterPassword = fieldsState.masterPassword.text.toString()
+		val confirmMasterPassword = fieldsState.confirmMasterPassword.text.toString()
+
+		_emailError.value = AuthValidator.validateEmail(email)
+		_masterPasswordError.value = AuthValidator.validateMasterPassword(masterPassword)
+		_confirmMasterPasswordError.value = if (_tab.value == AuthTab.SIGNUP) {
+			AuthValidator.validateConfirmPassword(masterPassword, confirmMasterPassword)
+		} else null
+
+		if (_emailError.value != null ||
+			_masterPasswordError.value != null ||
+			_confirmMasterPasswordError.value != null
+		) return@launch
 
 		val result = when (_tab.value) {
 			AuthTab.LOGIN -> signInUseCase(email, masterPassword)
@@ -104,9 +137,5 @@ class AuthViewModel @Inject constructor(
 
 	fun onForgotKeyClick() {
 		showMessage(messageString = "Функция в разработке")
-	}
-
-	fun onBiometricToggle(enabled: Boolean) {
-		_biometricEnabled.value = enabled
 	}
 }
