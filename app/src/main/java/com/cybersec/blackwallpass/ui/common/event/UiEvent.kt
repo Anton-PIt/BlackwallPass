@@ -1,4 +1,4 @@
-package com.cybersec.blackwallpass.ui.common
+package com.cybersec.blackwallpass.ui.common.event
 
 sealed interface UiEvent {
 	data class SnackbarEvent(

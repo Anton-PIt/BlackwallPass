@@ -1,4 +1,4 @@
-package com.cybersec.blackwallpass.ui.common
+package com.cybersec.blackwallpass.ui.common.progress
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
