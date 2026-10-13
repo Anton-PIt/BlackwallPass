@@ -32,4 +32,27 @@
 
 	<!-- Общая -->
 	<string name="error_unknown">Что-то пошло не так. Попробуйте ещё раз</string>
+
+	<!-- Auth Screen -->
+	<string name="auth_title">BLACKWALL//PASS</string>
+	<string name="auth_subtitle">ЗАЩИЩЁННОЕ ХРАНИЛИЩЕ v1.0</string>
+	<string name="auth_tab_login">ВХОД</string>
+	<string name="auth_tab_signup">РЕГИСТРАЦИЯ</string>
+	<string name="auth_field_email">EMAIL-АДРЕС</string>
+	<string name="auth_field_master_password">МАСТЕР-ПАРОЛЬ</string>
+	<string name="auth_field_confirm_password">ПОДТВЕРДИТЕ ПАРОЛЬ</string>
+	<string name="auth_biometric_title">БИОМЕТРИЯ</string>
+	<string name="auth_biometric_description">Быстрый доступ по биометрии</string>
+	<string name="auth_biometric_face">FACE ID</string>
+	<string name="auth_biometric_fingerprint">ОТПЕЧАТОК</string>
+	<string name="auth_forgot_key">ЗАБЫЛИ КЛЮЧ?</string>
+	<string name="auth_button_login">ВОЙТИ</string>
+	<string name="auth_button_signup">СОЗДАТЬ ХРАНИЛИЩЕ</string>
+	<string name="auth_encryption_info">СКВОЗНОЕ ШИФРОВАНИЕ · AES-256-GCM</string>
+	<string name="cd_show_password">Показать пароль</string>
+	<string name="cd_hide_password">Скрыть пароль</string>
+	<string name="password_strength_weak">СЛАБЫЙ</string>
+	<string name="password_strength_medium">СРЕДНИЙ</string>
+	<string name="password_strength_strong">НАДЁЖНЫЙ</string>
+	<string name="password_strength_max">МАКСИМАЛЬНЫЙ</string>
 </resources>

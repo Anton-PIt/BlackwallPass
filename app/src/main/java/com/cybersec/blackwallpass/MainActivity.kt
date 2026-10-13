@@ -4,44 +4,41 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.cybersec.blackwallpass.ui.screens.auth.presentation.AuthScreen
+import com.cybersec.blackwallpass.ui.screens.auth.presentation.AuthViewModel
 import com.cybersec.blackwallpass.ui.theme.BlackwallPassTheme
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.serialization.Serializable
 
+sealed interface Screen {
+	@Serializable object Auth : Screen
+}
+
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		enableEdgeToEdge()
 		setContent {
 			BlackwallPassTheme {
-				Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-					Greeting(
-						name = "Android",
-						modifier = Modifier.padding(innerPadding)
-					)
+				val navController = rememberNavController()
+
+				NavHost(
+					navController = navController,
+					startDestination = Screen.Auth
+				) {
+					composable<Screen.Auth> {
+						val authViewModel: AuthViewModel = hiltViewModel()
+						AuthScreen(
+							viewModel = authViewModel
+						)
+					}
 				}
 			}
 		}
-	}
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-	Text(
-		text = "Hello $name!",
-		modifier = modifier
-	)
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-	BlackwallPassTheme {
-		Greeting("Android")
 	}
 }

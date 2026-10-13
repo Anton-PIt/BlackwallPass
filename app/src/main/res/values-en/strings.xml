@@ -32,4 +32,27 @@
 
 	<!-- Common -->
 	<string name="error_unknown">Something went wrong. Please try again</string>
+
+	<!-- Auth Screen -->
+	<string name="auth_title">BLACKWALL//PASS</string>
+	<string name="auth_subtitle">SECURE VAULT v1.0</string>
+	<string name="auth_tab_login">SIGN IN</string>
+	<string name="auth_tab_signup">SIGN UP</string>
+	<string name="auth_field_email">EMAIL ADDRESS</string>
+	<string name="auth_field_master_password">MASTER PASSWORD</string>
+	<string name="auth_field_confirm_password">CONFIRM PASSWORD</string>
+	<string name="auth_biometric_title">BIOMETRICS</string>
+	<string name="auth_biometric_description">Quick access via biometrics</string>
+	<string name="auth_biometric_face">FACE ID</string>
+	<string name="auth_biometric_fingerprint">FINGERPRINT</string>
+	<string name="auth_forgot_key">FORGOT KEY?</string>
+	<string name="auth_button_login">LOG IN</string>
+	<string name="auth_button_signup">CREATE VAULT</string>
+	<string name="auth_encryption_info">END-TO-END ENCRYPTION · AES-256-GCM</string>
+	<string name="cd_show_password">Show password</string>
+	<string name="cd_hide_password">Hide password</string>
+	<string name="password_strength_weak">WEAK</string>
+	<string name="password_strength_medium">MEDIUM</string>
+	<string name="password_strength_strong">STRONG</string>
+	<string name="password_strength_max">MAXIMUM</string>
 </resources>

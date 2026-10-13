@@ -19,7 +19,11 @@ private val DarkColorScheme = darkColorScheme(
 
 @Composable
 fun BlackwallPassTheme(content: @Composable () -> Unit) {
-	CompositionLocalProvider(LocalAppColors provides AppColors()) {
+	CompositionLocalProvider(
+		LocalAppColors provides AppColors(),
+		LocalAppTextStyles provides AppTextStyles()
+
+	) {
 		MaterialTheme(
 			colorScheme = DarkColorScheme,
 			content = content
